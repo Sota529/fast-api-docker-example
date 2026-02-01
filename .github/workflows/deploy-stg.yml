@@ -1,4 +1,4 @@
-name: Deploy to Amazon ECS dev
+name: Deploy to Amazon ECS stg
 
 on:
   # push:
