@@ -45,3 +45,17 @@ http://localhost:8000 でアクセスできます。コード変更が自動反�
 ## API エンドポイント
 
 http://localhost:8000/docs で確認できます。
+
+## リリースフロー
+
+### 開発からステージングへ
+
+- `develop` ブランチにコミットが入ると、以下が実行されます：
+  - ステージング環境（stg）への自動デプロイ（`.github/workflows/deploy-stg.yml`）
+  - `develop` → `main` へのリリース PR の自動作成（`.github/workflows/create-release-pr.yml`）
+
+### ステージングから本番へ
+
+- `main` ブランチにマージされると、本番環境（prd）にデプロイされます
+- GitHub Actions: `.github/workflows/deploy-prd.yml`
+- **重要**: `main` ブランチへは、自動生成されたリリース PR 経由でのみマージしてください
