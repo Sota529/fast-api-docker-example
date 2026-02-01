@@ -39,7 +39,7 @@ jobs:
                   fi
 
                   TITLE="prdリリース"
-                  BODY=$(cat <<'EOF'
+                  BODY=$(cat <<EOF
                   ## 変更内容
                   ${{ steps.commits.outputs.list }}
                   EOF
