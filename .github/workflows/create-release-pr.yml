@@ -20,7 +20,8 @@ jobs:
             - name: Get commits
               id: commits
               run: |
-                  COMMITS=$(git log origin/main..origin/develop --pretty=format:"- %s (%h)" --reverse)
+                  git fetch origin main
+                  COMMITS=$(git log origin/main..HEAD --pretty=format:"- %s (%h)" --reverse)
                   echo "list<<EOF" >> $GITHUB_OUTPUT
                   echo "$COMMITS" >> $GITHUB_OUTPUT
                   echo "EOF" >> $GITHUB_OUTPUT
@@ -30,14 +31,14 @@ jobs:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   set -e
-                  
+
                   TITLE="prdリリース"
                   BODY=$(cat <<EOF
                   ## 変更内容
                   ${{ steps.commits.outputs.list }}
                   EOF
                   )
-                  
+
                   # Check if a PR from develop to main already exists
                   EXISTING_PR=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number // empty')
 
