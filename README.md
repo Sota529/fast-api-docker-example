@@ -48,14 +48,20 @@ http://localhost:8000/docs で確認できます。
 
 ## リリースフロー
 
-### 開発からステージングへ
+```
+feature/* → develop → main
+              ↓         ↓
+            STG       PRD
+```
 
-- `develop` ブランチにコミットが入ると、以下が実行されます：
-  - ステージング環境（stg）への自動デプロイ（`.github/workflows/deploy-stg.yml`）
-  - `develop` → `main` へのリリース PR の自動作成（`.github/workflows/create-release-pr.yml`）
+### 開発 → ステージング
 
-### ステージングから本番へ
+1. `feature/*` ブランチで開発
+2. `develop` へ PR を作成・マージ
+3. **STG に自動デプロイ**
 
-- `main` ブランチにマージされると、本番環境（prd）にデプロイされます
-- GitHub Actions: `.github/workflows/deploy-prd.yml`
-- **重要**: `main` ブランチへは、自動生成されたリリース PR 経由でのみマージしてください
+### ステージング → 本番
+
+1. `develop` → `main` へ PR を作成（手動）
+2. PR をマージ
+3. **PRD に自動デプロイ**
