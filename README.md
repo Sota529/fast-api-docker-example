@@ -50,9 +50,9 @@ http://localhost:8000/docs で確認できます。
 
 ### 開発からステージングへ
 
-- `develop` ブランチにマージされると、ステージング環境（stg）にデプロイされます
-- GitHub Actions: `.github/workflows/deploy-stg.yml`
-- また、`develop` ブランチへのプッシュ時に、`main` ブランチへのリリース PR が自動作成されます（`.github/workflows/create-release-pr.yml`）
+- `develop` ブランチにコミットが入ると、以下が実行されます：
+  - ステージング環境（stg）への自動デプロイ（`.github/workflows/deploy-stg.yml`）
+  - `develop` → `main` へのリリース PR の自動作成（`.github/workflows/create-release-pr.yml`）
 
 ### ステージングから本番へ
 
