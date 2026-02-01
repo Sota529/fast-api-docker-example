@@ -17,7 +17,6 @@ jobs:
               with:
                   fetch-depth: 0
 
-
             - name: Get commits
               id: commits
               run: |
@@ -33,14 +32,14 @@ jobs:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   set -e
-                  
+
                   TITLE="prdリリース"
                   BODY=$(cat <<EOF
                   ## 変更内容
                   ${{ steps.commits.outputs.list }}
                   EOF
                   )
-                  
+
                   # Check if a PR from develop to main already exists
                   EXISTING_PR=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number // empty')
 
