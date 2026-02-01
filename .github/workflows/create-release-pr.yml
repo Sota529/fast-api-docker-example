@@ -21,7 +21,7 @@ jobs:
             - name: Get commits
               id: commits
               run: |
-                  COMMITS=$(git log origin/main..HEAD --pretty=format:"- %s (%h)" --reverse)
+                  COMMITS=$(git log origin/main..origin/develop --pretty=format:"- %s (%h)" --reverse)
                   echo "list<<EOF" >> $GITHUB_OUTPUT
                   echo "$COMMITS" >> $GITHUB_OUTPUT
                   echo "EOF" >> $GITHUB_OUTPUT
