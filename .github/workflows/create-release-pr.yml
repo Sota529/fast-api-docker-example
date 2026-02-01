@@ -21,7 +21,6 @@ jobs:
               id: commits
               run: |
                   git fetch origin main
-                  git fetch origin develop
                   COMMITS=$(git log origin/main..HEAD --pretty=format:"- %s (%h)" --reverse)
                   echo "list<<EOF" >> $GITHUB_OUTPUT
                   echo "$COMMITS" >> $GITHUB_OUTPUT
