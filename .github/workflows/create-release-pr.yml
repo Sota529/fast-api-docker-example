@@ -1,0 +1,35 @@
+name: Create Release PR
+
+on:
+    push:
+        branches:
+            - develop
+
+jobs:
+    create-release-pr:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Get commits
+              id: commits
+              run: |
+                  COMMITS=$(git log origin/main..HEAD --pretty=format:"- %s (%h)" --reverse)
+                  echo "list<<EOF" >> $GITHUB_OUTPUT
+                  echo "$COMMITS" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
+            - name: Create Pull Request to main
+              uses: peter-evans/create-pull-request@v7
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  branch: develop
+                  base: main
+                  title: "prdリリース"
+                  body: |
+                      ## 変更内容
+                      ${{ steps.commits.outputs.list }}
+                  labels: release
