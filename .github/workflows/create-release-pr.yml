@@ -3,7 +3,7 @@ name: Create Release PR
 on:
     push:
         branches:
-            - feature/add_creation_release_pr
+            - copilot/sub-pr-2
 
 jobs:
     create-release-pr:
