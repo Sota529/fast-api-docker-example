@@ -8,6 +8,9 @@ on:
 jobs:
     create-release-pr:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -22,14 +25,29 @@ jobs:
                   echo "$COMMITS" >> $GITHUB_OUTPUT
                   echo "EOF" >> $GITHUB_OUTPUT
 
-            - name: Create Pull Request to main
-              uses: peter-evans/create-pull-request@v7
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  branch: develop
-                  base: main
-                  title: "prdリリース"
-                  body: |
-                      ## 変更内容
-                      ${{ steps.commits.outputs.list }}
-                  labels: release
+            - name: Ensure Pull Request to main exists
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  set -e
+                  # Check if a PR from develop to main already exists
+                  EXISTING_PR=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number // empty')
+
+                  if [ -n "$EXISTING_PR" ]; then
+                    echo "An open PR from develop to main already exists: #$EXISTING_PR"
+                    exit 0
+                  fi
+
+                  TITLE="prdリリース"
+                  BODY=$(cat <<'EOF'
+                  ## 変更内容
+                  ${{ steps.commits.outputs.list }}
+                  EOF
+                  )
+
+                  gh pr create \
+                    --base main \
+                    --head develop \
+                    --title "$TITLE" \
+                    --body "$BODY" \
+                    --label release
