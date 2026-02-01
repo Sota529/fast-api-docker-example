@@ -49,5 +49,4 @@ jobs:
                     --base main \
                     --head develop \
                     --title "$TITLE" \
-                    --body "$BODY" \
-                    --label release
+                    --body "$BODY"
