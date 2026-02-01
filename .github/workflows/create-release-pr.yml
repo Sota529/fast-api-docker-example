@@ -1,3 +1,4 @@
+# Workflow to automatically create release PRs from develop to main
 name: Create Release PR
 
 on:
