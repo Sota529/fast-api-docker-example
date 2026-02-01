@@ -17,16 +17,32 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Get commits
-              id: commits
+            - name: Check for code changes
+              id: changes
               run: |
                   git fetch origin main
+                  # コミット数ではなく、実際のコード差分をチェック
+                  DIFF=$(git diff origin/main..HEAD --stat)
+                  if [ -z "$DIFF" ]; then
+                    echo "No code changes between main and develop. Skipping."
+                    echo "has_changes=false" >> $GITHUB_OUTPUT
+                  else
+                    echo "Code changes found:"
+                    echo "$DIFF"
+                    echo "has_changes=true" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Get commits
+              if: steps.changes.outputs.has_changes == 'true'
+              id: commits
+              run: |
                   COMMITS=$(git log origin/main..HEAD --pretty=format:"- %s (%h)" --reverse)
                   echo "list<<EOF" >> $GITHUB_OUTPUT
                   echo "$COMMITS" >> $GITHUB_OUTPUT
                   echo "EOF" >> $GITHUB_OUTPUT
 
             - name: Ensure Pull Request to main exists
+              if: steps.changes.outputs.has_changes == 'true'
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
