@@ -3,7 +3,7 @@ name: Create Release PR
 on:
     push:
         branches:
-            - develop
+            - feature/add_creation_release_pr
 
 jobs:
     create-release-pr:
