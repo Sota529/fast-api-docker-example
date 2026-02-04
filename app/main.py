@@ -1,9 +1,10 @@
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.database import Base, engine, get_db
+from app.database import Base, SessionLocal, engine, get_db
 from app.models import User
 from app.schemas import UserCreate, UserResponse
 
@@ -14,16 +15,18 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     
     # Add sample data if the table is empty
-    db = next(get_db())
-    if db.query(User).count() == 0:
-        sample_users = [
-            User(name="山田太郎", email="yamada@example.com", age=30),
-            User(name="佐藤花子", email="sato@example.com", age=25),
-            User(name="鈴木一郎", email="suzuki@example.com", age=35),
-        ]
-        db.add_all(sample_users)
-        db.commit()
-    db.close()
+    db = SessionLocal()
+    try:
+        if db.query(User).count() == 0:
+            sample_users = [
+                User(name="山田太郎", email="yamada@example.com", age=30),
+                User(name="佐藤花子", email="sato@example.com", age=25),
+                User(name="鈴木一郎", email="suzuki@example.com", age=35),
+            ]
+            db.add_all(sample_users)
+            db.commit()
+    finally:
+        db.close()
     
     yield
 
@@ -66,8 +69,14 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """Create a new user"""
     db_user = User(**user.model_dump())
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    try:
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409, detail="User with this email already exists"
+        )
     return db_user
 
