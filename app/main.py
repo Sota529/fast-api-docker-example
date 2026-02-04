@@ -34,29 +34,29 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/")
+@app.get("/", tags=["General"])
 def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
+@app.get("/items/{item_id}", tags=["Items"])
 def read_item(item_id: int, q: str | None = None):
     return {"item_id": item_id, "q": q}
 
 
-@app.get("/health")
+@app.get("/health", tags=["General"])
 def health_check():
     return {"status": "healthy"}
 
 
-@app.get("/users", response_model=list[UserResponse])
+@app.get("/users", response_model=list[UserResponse], tags=["Users"])
 def get_users(db: Session = Depends(get_db)):
     """Get all users from database using ORM"""
     users = db.query(User).all()
     return users
 
 
-@app.get("/users/{user_id}", response_model=UserResponse)
+@app.get("/users/{user_id}", response_model=UserResponse, tags=["Users"])
 def get_user(user_id: int, db: Session = Depends(get_db)):
     """Get a specific user by ID"""
     user = db.query(User).filter(User.id == user_id).first()
@@ -65,7 +65,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-@app.post("/users", response_model=UserResponse, status_code=201)
+@app.post("/users", response_model=UserResponse, status_code=201, tags=["Users"])
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """Create a new user"""
     db_user = User(**user.model_dump())
@@ -75,8 +75,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         db.refresh(db_user)
     except IntegrityError:
         db.rollback()
-        raise HTTPException(
-            status_code=409, detail="User with this email already exists"
-        )
+        raise HTTPException(status_code=409, detail="User with this email already exists")
     return db_user
 
