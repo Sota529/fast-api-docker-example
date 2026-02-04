@@ -7,6 +7,12 @@ FastAPI を Docker で動かすサンプルプロジェクトです。
 - [uv](https://docs.astral.sh/uv/)（パッケージ追加時のみ）
 - Docker
 
+## 機能
+
+- FastAPI による REST API
+- SQLAlchemy ORM による MySQL データベース連携
+- Docker Compose による開発環境の構築
+
 ## uv のセットアップ
 
 パッケージの追加・更新時に必要です。
@@ -42,9 +48,23 @@ docker compose up
 
 http://localhost:8000 でアクセスできます。コード変更が自動反映されます。
 
+### データベース
+
+- MySQL 8.0 がコンテナで起動します
+- アプリケーション起動時に自動的にテーブルが作成されます
+- サンプルデータが自動的に投入されます
+
 ## API エンドポイント
 
 http://localhost:8000/docs で確認できます。
+
+### 利用可能なエンドポイント
+
+- `GET /` - Hello World
+- `GET /health` - ヘルスチェック
+- `GET /users` - ユーザー一覧取得（ORM経由でDBから取得）
+- `GET /users/{user_id}` - 特定ユーザーの取得
+- `POST /users` - 新規ユーザーの作成
 
 ## リリースフロー
 
