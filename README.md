@@ -69,14 +69,6 @@ docker compose up --build
 
 http://localhost:8000/docs で確認できます。
 
-### 利用可能なエンドポイント
-
-- `GET /` - Hello World
-- `GET /health` - ヘルスチェック
-- `GET /users` - ユーザー一覧取得（ORM経由でDBから取得）
-- `GET /users/{user_id}` - 特定ユーザーの取得
-- `POST /users` - 新規ユーザーの作成
-
 ## リリースフロー
 
 ```
