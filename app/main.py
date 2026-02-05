@@ -2,6 +2,7 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from sqlalchemy.exc import IntegrityError
 
 from app.database import Base, SessionLocal, engine
 from app.models import User
@@ -21,6 +22,8 @@ async def lifespan(app: FastAPI):
                 ]
                 db.add_all(sample_users)
                 db.commit()
+        except IntegrityError:
+            db.rollback()
         finally:
             db.close()
     yield

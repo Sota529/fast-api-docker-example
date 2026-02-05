@@ -1,10 +1,10 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserBase(BaseModel):
-    name: str
+    name: str = Field(..., max_length=100)
     email: EmailStr
-    age: int | None = None
+    age: int | None = Field(None, ge=0, le=150)
 
 
 class UserCreate(UserBase):
