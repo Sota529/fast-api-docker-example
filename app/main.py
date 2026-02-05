@@ -2,6 +2,7 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from app.database import Base, SessionLocal, engine
@@ -15,10 +16,10 @@ async def lifespan(app: FastAPI):
     if os.environ.get("SEED_DATA") == "true":
         db = SessionLocal()
         try:
-            if db.query(User).count() == 0:
+            if not db.scalars(select(User)).first():
                 sample_users = [
-                    User(name="Alice", email="alice@example.com"),
-                    User(name="Bob", email="bob@example.com"),
+                    User(name="Alice", email="alice@example.com", age=28),
+                    User(name="Bob", email="bob@example.com", age=35),
                 ]
                 db.add_all(sample_users)
                 db.commit()
