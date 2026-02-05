@@ -37,6 +37,6 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     except IntegrityError:
         db.rollback()
         raise HTTPException(
-            status_code=409, detail="User with this email already exists"
+            status_code=409, detail="Data integrity constraint violation"
         )
     return db_user
