@@ -29,6 +29,12 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 @router.post("", response_model=UserResponse, status_code=201)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """Create a new user"""
+    existing = db.scalars(select(User).where(User.email == user.email)).first()
+    if existing:
+        raise HTTPException(
+            status_code=409, detail="User with this email already exists"
+        )
+
     db_user = User(**user.model_dump())
     try:
         db.add(db_user)
