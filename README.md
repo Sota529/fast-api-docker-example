@@ -7,11 +7,42 @@ FastAPI を Docker で動かすサンプルプロジェクトです。
 - [uv](https://docs.astral.sh/uv/)（パッケージ追加時のみ）
 - Docker
 
-## uv のセットアップ
+## 機能
+
+- FastAPI による REST API
+- SQLAlchemy ORM による MySQL データベース連携
+- Docker Compose による開発環境の構築
+
+## ローカル開発
+
+### セットアップ
+
+`.env` ファイルをプロジェクトルートに作成：
+
+```bash
+# MySQL settings
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_DATABASE=fastapi_db
+MYSQL_USER=user
+MYSQL_PASSWORD=password
+
+# Application settings
+DATABASE_URL=mysql+pymysql://user:password@db:3306/fastapi_db
+```
+
+### サーバー起動
+
+```bash
+docker compose up
+```
+
+http://localhost:8000 でアクセスできます。コード変更が自動反映されます。
+
+### uv のセットアップ
 
 パッケージの追加・更新時に必要です。
 
-### インストール
+#### インストール
 
 ```bash
 # macOS / Linux
@@ -21,7 +52,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 brew install uv
 ```
 
-### パッケージの追加
+#### パッケージの追加
 
 ```bash
 # パッケージ追加
@@ -33,14 +64,6 @@ uv add --dev pytest
 # Docker に反映
 docker compose up --build
 ```
-
-## ローカル開発
-
-```bash
-docker compose up
-```
-
-http://localhost:8000 でアクセスできます。コード変更が自動反映されます。
 
 ## API エンドポイント
 
