@@ -1,14 +1,28 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.database import Base, engine
+from app.database import Base, SessionLocal, engine
+from app.models import User
 from app.routers import items, users
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    if os.environ.get("SEED_DATA") == "true":
+        db = SessionLocal()
+        try:
+            if db.query(User).count() == 0:
+                sample_users = [
+                    User(name="Alice", email="alice@example.com"),
+                    User(name="Bob", email="bob@example.com"),
+                ]
+                db.add_all(sample_users)
+                db.commit()
+        finally:
+            db.close()
     yield
 
 

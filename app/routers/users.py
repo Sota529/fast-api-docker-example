@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -12,14 +13,14 @@ router = APIRouter()
 @router.get("", response_model=list[UserResponse])
 def get_users(db: Session = Depends(get_db)):
     """Get all users from database using ORM"""
-    users = db.query(User).all()
+    users = db.scalars(select(User)).all()
     return users
 
 
 @router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, db: Session = Depends(get_db)):
     """Get a specific user by ID"""
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.scalars(select(User).where(User.id == user_id)).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
